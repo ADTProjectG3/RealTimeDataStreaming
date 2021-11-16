@@ -20,8 +20,8 @@ KAFKA_BOOTSTRAP_SERVERS_CONS = "localhost:9092"
 
 db_target_properties_dict = {"user":"sparkuser", "password":"Spark@123", "driver": 'com.mysql.jdbc.Driver'}
 
-url = "jdbc:mysql://localhost:3306/test"
-dbtable = "sparkdata"
+url = "jdbc:mysql://localhost:3306/datastreaming"
+dbtable = "sparkdatastream"
 
 def foreach_batch_function(df, epoch_id):
 
