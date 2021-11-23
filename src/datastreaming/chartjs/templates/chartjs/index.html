@@ -13,35 +13,59 @@
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
+<style>
+	.topnav {
+		overflow: hidden;
+		background-color: #333;
+	}
 
+</style>
 
 </head>
 
 <body class="container-fluid">
-<center class="row">
-	<h1>implementation of <b>chartJS</b> using <b>django</b></h1>
+<div class="topnav">
+<center>
+	<h1 style="color:white;">Transport Data Dashboard</h1>
 </center>
-<hr />
-<div class="row">
-	<div class="col-md-6">
+</div>
+<br />
+<br />
+
+	<div class="col-md-8">
 	<canvas id="myChartline"></canvas>
 	</div>
-	<div class="col-md-6">
+	<br />
+	<div class="col-md-6" style=" padding: 5rem;" >
 	<canvas id="myChartBar"></canvas>
 	</div>
-</div>
+	
+	<div class="col-md-6" style=" padding: 5rem;">
+		<canvas id="myPolarChart"></canvas>
+	</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
 <script>
 	var endpoint = '/api';
 
+	var intervalId = window.setInterval(function () {
+		console.log("calling drawgraphs")
+		drawgraphs();
+		}, 5000);
+
+		drawgraphs();
+
+
+function drawgraphs(){
 	$.ajax({
 	method: "GET",
-	url: endpoint,
+	url: '/api',
 	success: function(data) {
 		drawLineGraph(data, 'myChartline');
 		drawBarGraph(data, 'myChartBar');
+		// drawPolarChart(data,'myPolarChart');
 		console.log("drawing");
 	},
 	error: function(error_data) {
@@ -49,6 +73,19 @@
 	}
 	})
 
+	$.ajax({
+			method: "GET",
+			url: '/pointdata',
+			success: function (data) {
+			
+				drawPolarChart(data, 'myPolarChart');
+				// console.log("drawing");
+			},
+			error: function (error_data) {
+				console.log(error_data);
+			}
+		})
+	}
 
 	function drawLineGraph(data, id) {
 	var labels = data.labels;
@@ -68,7 +105,7 @@
 			borderColor: 'rgb(55, 99, 132)',
 			data: chartdata,
 		}]
-		},
+		}, 	
 
 		// Configuration options go here
 		options: {
@@ -129,6 +166,50 @@
 		}
 	});
 	}
+
+	function drawPolarChart(data, id) {
+			var labels = data.labels;
+			var chartLabel = data.chartLabel;
+			var chartdata = data.chartdata;
+			console.log(data)
+			var ctx = document.getElementById(id).getContext('2d');
+			var myChart = new Chart(ctx, {
+				type: 'polarArea',
+				data: {
+					labels: labels,
+					datasets: [{
+						label: chartLabel,
+						data: chartdata,
+						backgroundColor: [
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(54, 162, 235, 0.2)',
+							'rgba(255, 206, 86, 0.2)',
+							'rgba(75, 192, 192, 0.2)',
+							'rgba(153, 102, 255, 0.2)',
+							'rgba(255, 159, 64, 0.2)'
+						],
+						borderColor: [
+							'rgba(255, 99, 132, 1)',
+							'rgba(54, 162, 235, 1)',
+							'rgba(255, 206, 86, 1)',
+							'rgba(75, 192, 192, 1)',
+							'rgba(153, 102, 255, 1)',
+							'rgba(255, 159, 64, 1)'
+						],
+						borderWidth: 1
+					}]
+				},
+				options: {
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero: true
+							}
+						}]
+					}
+				}
+			});
+		}
 </script>
 </body>
 
