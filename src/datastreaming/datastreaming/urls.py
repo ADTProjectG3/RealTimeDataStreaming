@@ -24,5 +24,9 @@ urlpatterns = [
     path('', views.HomeView.as_view()),
 	# path('test-api', views.get_data),
 	path('api', views.ChartData.as_view()),
+	path('pointdata', views.PointData.as_view()),
+    
+    
+
 
 ]
