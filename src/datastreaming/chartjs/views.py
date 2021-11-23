@@ -39,3 +39,22 @@ class ChartData(APIView):
             chartdata=chartdata
         )
         return Response(data)
+
+
+class PointData(APIView):
+    authentication_classes = []
+    permission_classes = []
+    def get(self, request, format=None):
+        qs = SparkData.objects.values("status").distinct().annotate(total=Count("pk"))
+        labels = list()
+        chartdata = list()
+        for val in qs:
+            labels.append(val.get("status"))
+            chartdata.append(val.get("total"))
+        chartLabel = "Orders distribution"
+        data = dict(
+            labels=labels,
+            chartLabel=chartLabel,
+            chartdata=chartdata
+        )
+        return Response(data)
